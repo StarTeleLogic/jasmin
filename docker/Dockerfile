@@ -1,6 +1,6 @@
 FROM debian:jessie
 
-MAINTAINER Jookies LTD <jasmin@jookies.net>
+MAINTAINER Mukesh Kumar <mukesh@startelelogic.co.in>
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r jasmin && useradd -r -g jasmin jasmin
@@ -19,6 +19,17 @@ RUN apt-get update && apt-get install -y \
     supervisor \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+      apt-get -y install sudo
+RUN sudo pip install --upgrade setuptools
+RUN sudo pip install x509
+RUN sudo apt-get install libssl-dev
+RUN sudo pip install service_identity
+RUN apt-get update && apt-get install -y git
+
+# Clone the conf files into the docker container
+RUN git clone -b 0.9.31 https://github.com/surendratiwari3/jasmin.git
+
 
 # Install Jasmin SMS gateway
 RUN mkdir -p /etc/jasmin/resource \
@@ -26,7 +37,8 @@ RUN mkdir -p /etc/jasmin/resource \
     /var/log/jasmin \
   && chown jasmin:jasmin /etc/jasmin/store \
     /var/log/jasmin \
-  && pip install --pre jasmin=="$JASMIN_VERSION"
+  && cd jasmin \
+  && python setup.py install
 
 # Change binding host for jcli
 RUN sed -i '/\[jcli\]/a bind=0.0.0.0' /etc/jasmin/jasmin.cfg
