@@ -1,0 +1,8 @@
+orbs:
+  aws-ecr: circleci/aws-ecr@6.0.0
+version: 2.1
+workflows:
+  build_and_push_image:
+    jobs:
+      - aws-ecr/build-and-push-image:
+          repo: telemo/jasmin
