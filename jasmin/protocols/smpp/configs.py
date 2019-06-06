@@ -105,8 +105,6 @@ class SMPPClientConfig(object):
         if len(self.username) > 15:
             raise TypeMismatch('username is longer than allowed size (15)')
         self.password = kwargs.get('password', 'password')
-        if len(self.password) > 8:
-            raise TypeMismatch('password is longer than allowed size (8)')
         self.systemType = kwargs.get('systemType', '')
 
         # Reconnection
